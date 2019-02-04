@@ -1,12 +1,16 @@
-// Identical to target2, but compiled with DEP enabled.
-
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 void vulnerable(char *arg)
 {
-	char buf[100];
-	strcpy(buf, arg);
+	int *p;
+	int a;
+	char buf[2048];
+
+	strncpy(buf, arg, sizeof(buf) + 8);
+
+	*p = a;
 }
 
 int _main(int argc, char **argv)
