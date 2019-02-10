@@ -14,7 +14,6 @@ class XSSNone(object):
         response.set_header("X-XSS-Protection", "0");           
     @staticmethod
     def filter(user_input):
-	print 'wtf'
         return user_input
 
 class XSSEncodeAngles(object):
@@ -26,9 +25,9 @@ class XSSEncodeAngles(object):
         response.set_header("X-XSS-Protection", "0");
     @staticmethod
     def filter(user_input):
-	print "I am in the right one"
-	print user_input
         #TODO: complete this filter definition
+	user_input = re.sub('<', '%lt', user_input)
+	user_input = re.sub('>', '%gt', user_input)
         return user_input	
 
 ############################################################
@@ -55,12 +54,14 @@ class CSRFToken(object):
     @staticmethod
     def init(request, response):
         token = request.get_cookie("csrf_token")
-
         #TODO: implement Token validation
-
+	if not token:
+	    token = md5(os.urandom(100)).digest()
+	response.set_cookie("csrf_token", token)
         return token
     @staticmethod
     def formHTML(token):
+	return None
         return "<input type='hidden' name='csrf_token' value='" + token + "'>"
     @staticmethod
     def validate(request, token):
