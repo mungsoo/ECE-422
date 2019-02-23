@@ -1,7 +1,7 @@
 import re, os
 from bottle import FormsDict, HTTPError
 from hashlib import md5
-
+import binascii
 ############################################################
 # XSS Defenses
 
@@ -55,16 +55,21 @@ class CSRFToken(object):
     def init(request, response):
         token = request.get_cookie("csrf_token")
         #TODO: implement Token validation
+	print "In init token=:"
+        print token
 	if not token:
-	    token = md5(os.urandom(100)).digest()
+	    token = binascii.b2a_hex(md5(os.urandom(100)).digest())
 	response.set_cookie("csrf_token", token)
         return token
     @staticmethod
     def formHTML(token):
-	return None
+	print "From HTML token" + token + " 111"
         return "<input type='hidden' name='csrf_token' value='" + token + "'>"
     @staticmethod
     def validate(request, token):
+	print request.forms.get('csrf_token')
+	print "##########"
+	print token
         if request.forms.get('csrf_token') != token:
             raise HTTPError(403, "CSRF Attack Detected (bad or missing token)")        
 
