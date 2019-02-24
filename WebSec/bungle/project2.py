@@ -41,7 +41,7 @@ def search():
 
 @post("/login")
 def login(create=False):
-    defenses.setup(request, response)
+    defenses.setup(request, response) # setCookies
     csrftoken = defenses.csrfDefense.init(request, response)
     defenses.csrfDefense.validate(request, csrftoken)
     username = request.forms.get("username")

