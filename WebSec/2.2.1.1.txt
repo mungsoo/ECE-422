@@ -1,1 +1,1 @@
-username=anything&password=' or ''='
+username=victim&password=' or ''='
