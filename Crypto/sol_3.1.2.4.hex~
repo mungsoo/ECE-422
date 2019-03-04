@@ -3,7 +3,6 @@ import sys
 
 if len(sys.argv) != 5:
     print("Error: Invalid number of arguments")
-    sys.exit()
 
 ciphertext_file = sys.argv[1]
 key_file = sys.argv[2]
@@ -21,8 +20,7 @@ ciphertext = int(ciphertext, 16)
 key = int(key, 16)
 modulo = int(modulo, 16)
 
-text = hex(pow(ciphertext, key, modulo))[2:-1]
-with open(output_file, "w") as f:
-    f.write(text)
+text = hex(math.pow(ciphertext, key) % modulo)
+print(text)
 
 
