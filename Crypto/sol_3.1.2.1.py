@@ -1,3 +1,4 @@
+#python sol_3.1.2.1.py 3.1.2.1_sub_ciphertext.txt 3.1.2.1_sub_key.txt sol_3.1.2.1.txt
 import sys
 
 if len(sys.argv) != 4:

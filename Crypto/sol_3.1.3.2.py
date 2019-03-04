@@ -1,12 +1,14 @@
 #WHA
+#
 import sys
 import random
 import string
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     print("Error: Invalid number of arguments")
     sys.exit()
 input_file= sys.argv[1]
+output_file= sys.argv[2]
 
 with open(input_file) as f:
     input_str = f.read().strip()
@@ -24,6 +26,6 @@ for i in range(len(input_str)):
 #print outHash
 print hex(outHash)
 
-# with open(output_file, 'w') as f:
-#     f.write(hex(outHash)[2:])
+with open(output_file, 'w') as f:
+    f.write(hex(outHash)[2:])
 

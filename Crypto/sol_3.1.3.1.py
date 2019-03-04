@@ -1,7 +1,14 @@
+#python sol_3.1.3.1.py 3.1.3.1_input_string.txt 3.1.3.1_perturbed_string.txt sol_3.1.3.1.hex
+import sys
 from Crypto.Hash import SHA256
 
-file1 = '3.1.3.1_input_string.txt'
-file2 = '3.1.3.1_perturbed_string.txt'
+if len(sys.argv) != 4:
+    print("Error: Invalid number of arguments")
+    sys.exit()
+
+file1 = sys.argv[1]
+file2 = sys.argv[2]
+output_file = sys.argv[3]
 
 with open(file1) as f:
     string1 = f.read().strip()
@@ -26,5 +33,8 @@ hamming_dist = 0
 for idx in range(length):
 	if bin1[idx] != bin2[idx]:
 		hamming_dist += 1
+text = hex(hamming_dist)[2:]
+print text
 
-print hex(hamming_dist)[2:]
+with open(output_file, 'w') as f:
+    f.write(text)
