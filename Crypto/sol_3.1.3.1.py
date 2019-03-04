@@ -20,5 +20,5 @@ hash_2 = int(sha256(text_2).hexdigest(), 16)
 distance = bin((hash_1 ^ hash_2)).count("1")
 
 with open(output_file, "w") as f:
-    f.write(hex(distance))
+    f.write(hex(distance)[2:])
 
