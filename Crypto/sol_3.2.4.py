@@ -76,7 +76,7 @@ for i, p in enumerate(gcds):
         except "Modular multiplicative inverse doesn't exist":
             print("Error: Can not compute private key of modulis[%d]" % i)
 
-
+# Try to decrypt using each private key
 for key in private_keys:
     try:
         plaintext = decrypt(key, ciphtertext)
@@ -85,7 +85,7 @@ for key in private_keys:
     except:
         pass
 
-with open("ol_3.2.4.txt", "w") as f:
+with open("sol_3.2.4.txt", "w") as f:
     f.write(plaintext)
 
 
