@@ -175,11 +175,13 @@ class md5(object):
         index = int(self.count >> 3) & 0x3F
         self.count = self.count + (inputLen << 3) # update number of bits
         partLen = md5.block_size - index
-
+        print(partLen)
         # apply compression function to as many blocks as we have
         if inputLen >= partLen:
             self.buffer = self.buffer[:index] + input[:partLen]
+            print(self.state, self.buffer)
             self.state = md5_compress(self.state, self.buffer)
+            print(self.state)
             i = partLen
             while i + 63 < inputLen:
                 self.state = md5_compress(self.state, input[i:i+md5.block_size])
@@ -190,6 +192,7 @@ class md5(object):
 
         # buffer remaining output
         self.buffer = self.buffer[:index] + input[i:inputLen]
+        print(self.buffer, self.count, self.state)
         
 
     def digest(self):
