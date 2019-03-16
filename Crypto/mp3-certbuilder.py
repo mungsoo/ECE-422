@@ -32,6 +32,7 @@ ECE422_CA_KEY, _ = make_privkey(100798379326803138907256747723290553122501628306
 # - 'not_valid_before' date must must be March 1
 # - 'not_valid_after'  date must must be March 27
 # Other fields (such as pseudonym) can be whatever you want, we won't check them
+# Set the serial so that the number of bytes before public key is a multiple of block size
 def make_cert(netid, pubkey, ca_key = ECE422_CA_KEY, serial=4772483458719937903370594016975L):
     builder = x509.CertificateBuilder()
     builder = builder.not_valid_before(datetime.datetime(2017, 3, 1))

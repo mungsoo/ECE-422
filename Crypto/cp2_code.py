@@ -38,7 +38,8 @@ import sys
 # # Assume we don't know m, but we know its hash is 3ecc68efa1871751ea9b0b1a5b25004d
 #
 # # Keep state by "adding" one compression function block
-# h = md5(state="3ecc68efa1871751ea9b0b1a5b25004d".decode("hex"), count=1024)
+# # Notice that count has to be exacly the number of m + padding(len(m) * 8) because the last padding 8 bytes are the bits in the unpadded message
+# h = md5(state="3ecc68efa1871751ea9b0b1a5b25004d".decode("hex"), count=512)
 # x = "Good advice"
 # h.update(x)
 # print(h.hexdigest())

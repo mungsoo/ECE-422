@@ -192,7 +192,7 @@ class md5(object):
 
         # buffer remaining output
         self.buffer = self.buffer[:index] + input[i:inputLen]
-        print(self.buffer, self.count, self.state)
+        # print(self.buffer, self.count, self.state)
         
 
     def digest(self):
