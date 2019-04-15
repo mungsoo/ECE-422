@@ -1,0 +1,5 @@
+###Solution Example: ###
+#filename.ext
+#e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+suicidenote.doc
+d27d3052b1ec367982c9239266b14d0657cf747df37d4e0010266a5c4258aa2a  

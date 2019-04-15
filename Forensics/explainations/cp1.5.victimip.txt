@@ -1,0 +1,34 @@
+###Solution Example: ###
+#127.0.0.1
+I found it by running sudo grep -Ea --color "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" ./var/log/syslog | grep DHCP
+
+Just before the attack
+
+Nov  3 18:28:31 ladiesman461-laptop dhclient: DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 3 (xid=0xa7475541)
+Nov  3 18:28:32 ladiesman461-laptop dhclient: DHCPREQUEST of 10.46.1.103 on enp0s3 to 255.255.255.255 port 67 (xid=0x415547a7)
+Nov  3 18:28:32 ladiesman461-laptop dhclient: DHCPOFFER of 10.46.1.103 from 10.46.1.1
+Nov  3 18:28:32 ladiesman461-laptop dhclient: DHCPACK of 10.46.1.103 from 10.46.1.1
+
+And the next DHCP request is made at 11031947
+
+Nov  3 19:43:39 ladiesman461-laptop dhclient: DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 3 (xid=0x52510e56)
+
+
+Just before the attack
+
+Nov  4 01:18:39 ladiesman461-laptop dhclient: DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 3 (xid=0xc5cdf322)
+Nov  4 01:18:40 ladiesman461-laptop dhclient: DHCPREQUEST of 10.46.1.103 on enp0s3 to 255.255.255.255 port 67 (xid=0x22f3cdc5)
+Nov  4 01:18:40 ladiesman461-laptop dhclient: DHCPOFFER of 10.46.1.103 from 10.46.1.1
+Nov  4 01:18:40 ladiesman461-laptop dhclient: DHCPACK of 10.46.1.103 from 10.46.1.1
+
+And the next DHCP request is made at 11040547
+
+Nov  4 05:47:31 ladiesman461-laptop dhclient: DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 3 (xid=0x253b3c5b)
+
+Just before the attack
+
+Nov  4 19:29:29 ladiesman461-laptop dhclient: DHCPREQUEST of 10.46.1.103 on enp0s3 to 255.255.255.255 port 67 (xid=0x7d69a858)
+Nov  4 19:29:29 ladiesman461-laptop dhclient: DHCPOFFER of 10.46.1.103 from 10.46.1.1
+Nov  4 19:29:29 ladiesman461-laptop dhclient: DHCPACK of 10.46.1.103 from 10.46.1.1
+
+So I found during the attack, the ip address of victim was 10.46.1.103.

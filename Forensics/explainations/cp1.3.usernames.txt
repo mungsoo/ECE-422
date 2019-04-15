@@ -1,0 +1,1 @@
+I checked two log directories in victim_fs/home/ladiesman461/.purple/logs/jabber/ladiesman461@jwchat.org
