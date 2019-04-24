@@ -1,3 +1,5 @@
 ###Solution Example: ###
 #filename.ext
 #e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+password.zip
+9627e010a442c18bd26b0066e0c3d8a4e6a266641e0d9bb64f0388f40819bfe4

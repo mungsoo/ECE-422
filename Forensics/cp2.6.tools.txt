@@ -1,3 +1,5 @@
 ###Solution Example: ###
 #zip
 #john
+nmap
+hydra
